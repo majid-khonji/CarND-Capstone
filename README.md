@@ -1,3 +1,38 @@
+
+
+## Perception: Data Annotation and Deep Learning
+
+Tools:
+* Annotation: [labelImg](https://github.com/tzutalin/labelImg)
+* Convert annotated data and images to tensorflow format: [Rectlabel-support](https://github.com/ryouchinsa/Rectlabel-support) 
+  * Also had to change the source code to deal with some issues
+  * output should be a file sim_data.record
+
+### Training
+
+* Based on Tensor Flow [object_detection tool](https://github.com/tensorflow/models/tree/master/research/object_detection)
+* Deal with installation headache. Once all fixed,
+* Go to <path>/ models/research
+*  mkdir checkpoints
+* copy sim_data.record to <path>/models/research
+
+```bash
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+```
+
+
+
+```bash
+python object_detection/train.py --pipeline_config_path=config/ssd_mobilenet_v1_coco_sim.config --train_dir=checkpoints/
+```
+
+### Saving model
+
+```bash
+python object_detection/export_inference_graph.py --pipeline_config_path=config/ssd_mobilenet_v1_coco_real.config --trained_checkpoint_prefix=checkpoints/model.ckpt-6000 --output_directory=majid_models/
+```
+
+# Original README
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
 Please use **one** of the two installation options, either native **or** docker installation.
@@ -16,6 +51,7 @@ Please use **one** of the two installation options, either native **or** docker 
   * [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) if you have Ubuntu 16.04.
   * [ROS Indigo](http://wiki.ros.org/indigo/Installation/Ubuntu) if you have Ubuntu 14.04.
 * [Dataspeed DBW](https://bitbucket.org/DataspeedInc/dbw_mkz_ros)
+  
   * Use this option to install the SDK on a workstation that already has ROS installed: [One Line SDK Install (binary)](https://bitbucket.org/DataspeedInc/dbw_mkz_ros/src/81e63fcc335d7b64139d7482017d6a97b405e250/ROS_SETUP.md?fileviewer=file-view-default)
 * Download the [Udacity Simulator](https://github.com/udacity/CarND-Capstone/releases).
 
@@ -78,13 +114,13 @@ Outside of `requirements.txt`, here is information on other driver/library versi
 
 Specific to these libraries, the simulator grader and Carla use the following:
 
-|        | Simulator | Carla  |
-| :-----------: |:-------------:| :-----:|
-| Nvidia driver | 384.130 | 384.130 |
-| CUDA | 8.0.61 | 8.0.61 |
-| cuDNN | 6.0.21 | 6.0.21 |
-| TensorRT | N/A | N/A |
-| OpenCV | 3.2.0-dev | 2.4.8 |
-| OpenMP | N/A | N/A |
+|               | Simulator |  Carla  |
+| :-----------: | :-------: | :-----: |
+| Nvidia driver |  384.130  | 384.130 |
+|     CUDA      |  8.0.61   | 8.0.61  |
+|     cuDNN     |  6.0.21   | 6.0.21  |
+|   TensorRT    |    N/A    |   N/A   |
+|    OpenCV     | 3.2.0-dev |  2.4.8  |
+|    OpenMP     |    N/A    |   N/A   |
 
 We are working on a fix to line up the OpenCV versions between the two.
