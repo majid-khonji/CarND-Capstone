@@ -3,14 +3,15 @@ import tensorflow as tf
 import numpy as np
 import cv2
 import rospy
+import os
 
 IMG_MAX_WIDTH = 300
 IMG_MAX_HEIGHT = 300
 MIN_SCORE_THRESHOLD = .5
 
-# FROZEN_MODEL_PATH = "light_classification/frozen_inference_graphs/frozen_inference_graph.pb"
-# FROZEN_MODEL_PATH = "light_classification/frozen_inference_graphs/frozen_inference_graph3.pb"
-FROZEN_MODEL_PATH = "light_classification/frozen_inference_graphs/frozen_inference_graph0.pb"
+# FROZEN_MODEL_PATH = "frozen_inference_graphs/frozen_inference_graph.pb"
+# FROZEN_MODEL_PATH = "frozen_inference_graphs/frozen_inference_graph3.pb"
+FROZEN_MODEL_FILE = "frozen_inference_graphs/frozen_inference_graph0.pb"
 class TLClassifier(object):
     def __init__(self):
         self.model_graph = None
@@ -19,7 +20,10 @@ class TLClassifier(object):
                         2: TrafficLight.YELLOW,
                         3: TrafficLight.GREEN,
                         4: TrafficLight.UNKNOWN}
-        self.load_model(FROZEN_MODEL_PATH)
+
+        cwd = os.path.dirname(os.path.realpath(__file__))
+        model_path = os.path.join(cwd, FROZEN_MODEL_FILE)
+        self.load_model(model_path)
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
@@ -66,12 +70,12 @@ class TLClassifier(object):
         classes = np.squeeze(classes)
         boxes = np.squeeze(boxes)
 
-        rospy.logwarn("tl_classifier: {} Traffic Light Class detected: classes: {} \n scores: {}".format(num, classes, scores))
+        # rospy.logwarn("tl_classifier: {} Traffic Light Class detected: classes: {} \n scores: {}".format(num, classes, scores))
 
         for i, box in enumerate(boxes):
             if scores[i] > min_score_thresh:
                 light_class = self.classes[classes[i]]
-                rospy.logwarn("tl_classifier: Traffic Light Class detected: %d", light_class)
+                # rospy.logwarn("tl_classifier: Traffic Light Class detected: %d", light_class)
                 return light_class, scores[i]
 
         return None, None

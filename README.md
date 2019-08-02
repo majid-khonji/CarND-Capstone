@@ -1,6 +1,8 @@
+# Individual Submission
 
 
-## Perception: Data Annotation and Deep Learning
+
+## Notes on Perception: Data Annotation and Deep Learning
 
 Tools:
 * Annotation: [labelImg](https://github.com/tzutalin/labelImg)
@@ -8,12 +10,17 @@ Tools:
   * Also had to change the source code to deal with some issues
   * output should be a file sim_data.record
 
+However, training using my dataset wasn't as good as [an openly available dataset.](https://drive.google.com/file/d/0B-Eiyn-CUQtxdUZWMkFfQzdObUE/view)
+
+Eventually decided to use the other dataset. 
+
 ### Training
 
-* Based on Tensor Flow [object_detection tool](https://github.com/tensorflow/models/tree/master/research/object_detection)
-* Deal with installation headache. Once all fixed,
+* ssd_mobilenet
+* Use Tensor Flow [object_detection tool](https://github.com/tensorflow/models/tree/master/research/object_detection)
+  * Deal with installation headache, environment vars, missing packages....
 * Go to <path>/ models/research
-*  mkdir checkpoints
+* mkdir checkpoints
 * copy sim_data.record to <path>/models/research
 
 ```bash
@@ -23,13 +30,13 @@ export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 
 
 ```bash
-python object_detection/train.py --pipeline_config_path=config/ssd_mobilenet_v1_coco_sim.config --train_dir=checkpoints/
+python object_detection/train.py --pipeline_config_path=config/ssd_mobilenet_v1_coco.config --train_dir=checkpoints/
 ```
 
 ### Saving model
 
 ```bash
-python object_detection/export_inference_graph.py --pipeline_config_path=config/ssd_mobilenet_v1_coco_real.config --trained_checkpoint_prefix=checkpoints/model.ckpt-6000 --output_directory=majid_models/
+python object_detection/export_inference_graph.py --pipeline_config_path=config/ssd_mobilenet_v1_coco.config --trained_checkpoint_prefix=checkpoints/model.ckpt-6000 --output_directory=majid_models/
 ```
 
 # Original README
@@ -51,7 +58,7 @@ Please use **one** of the two installation options, either native **or** docker 
   * [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) if you have Ubuntu 16.04.
   * [ROS Indigo](http://wiki.ros.org/indigo/Installation/Ubuntu) if you have Ubuntu 14.04.
 * [Dataspeed DBW](https://bitbucket.org/DataspeedInc/dbw_mkz_ros)
-  
+
   * Use this option to install the SDK on a workstation that already has ROS installed: [One Line SDK Install (binary)](https://bitbucket.org/DataspeedInc/dbw_mkz_ros/src/81e63fcc335d7b64139d7482017d6a97b405e250/ROS_SETUP.md?fileviewer=file-view-default)
 * Download the [Udacity Simulator](https://github.com/udacity/CarND-Capstone/releases).
 

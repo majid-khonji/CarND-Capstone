@@ -20,6 +20,9 @@ import base64
 
 import math
 
+
+import cv2
+
 TYPE = {
     'bool': Bool,
     'float': Float,
@@ -35,7 +38,8 @@ TYPE = {
     'image':Image
 }
 
-
+KEEP_EVERY_N = 10
+# optimization tricks: keep every n image, also resize image before publishing
 class Bridge(object):
     def __init__(self, conf, server):
         rospy.init_node('styx_server')
@@ -57,6 +61,8 @@ class Bridge(object):
 
         self.publishers = {e.name: rospy.Publisher(e.topic, TYPE[e.type], queue_size=1)
                            for e in conf.publishers}
+
+        self.count = 0 # used to count images, then publish if count % KEEP_EVERY_N == 0
 
     def create_light(self, x, y, z, yaw, state):
         light = TrafficLight()
@@ -175,12 +181,16 @@ class Bridge(object):
         self.publishers['dbw_status'].publish(Bool(data))
 
     def publish_camera(self, data):
-        imgString = data["image"]
-        image = PIL_Image.open(BytesIO(base64.b64decode(imgString)))
-        image_array = np.asarray(image)
+        if self.count % KEEP_EVERY_N == 0:
+            imgString = data["image"]
+            image = PIL_Image.open(BytesIO(base64.b64decode(imgString)))
+            image_array = np.asarray(image)
+            image_array = cv2.resize(image_array, (300, 300))
+            # rospy.logwarn("image shape {}".format(image_array.shape))
+            image_message = self.bridge.cv2_to_imgmsg(image_array, encoding="rgb8")
+            self.publishers['image'].publish(image_message)
+        self.count += 1
 
-        image_message = self.bridge.cv2_to_imgmsg(image_array, encoding="rgb8")
-        self.publishers['image'].publish(image_message)
 
     def callback_steering(self, data):
         self.server('steer', data={'steering_angle': str(data.steering_wheel_angle_cmd)})

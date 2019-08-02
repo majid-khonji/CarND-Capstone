@@ -32,7 +32,7 @@ that we have created in the `__init__` function.
 '''
 
 # TODO: RETURN IT TO 50 BEFORE SUBMISSION (running on slow PC)
-PUBLISH_RATE = 50
+PUBLISH_RATE = 25
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')

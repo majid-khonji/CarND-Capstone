@@ -14,11 +14,12 @@ import time
 from scipy.spatial import KDTree
 import numpy as np
 
-STATE_COUNT_THRESHOLD = 3
 TEST_MODE = False
 DATA_COLLECTION = False
+STATE_COUNT_THRESHOLD = 3
 IMG_CALLBACK_RATE = 1
 
+WPS_TO_CLASSIFY = 200
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
@@ -33,6 +34,17 @@ class TLDetector(object):
         self.waypoint_tree = None
         self.waypoints_2d = None
         #####
+        self.bridge = CvBridge()
+        if not TEST_MODE:
+            self.light_classifier = TLClassifier()
+        self.listener = tf.TransformListener()
+
+        self.state = TrafficLight.UNKNOWN
+        self.last_state = TrafficLight.UNKNOWN
+        self.last_wp = -1
+        self.state_count = 0
+        self.state = TrafficLight.UNKNOWN
+        config_string = rospy.get_param("/traffic_light_config")
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -47,19 +59,10 @@ class TLDetector(object):
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
         sub6 = rospy.Subscriber('/image_color', Image, self.image_cb)
 
-        config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
-
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
-        self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
-        self.listener = tf.TransformListener()
 
-        self.state = TrafficLight.UNKNOWN
-        self.last_state = TrafficLight.UNKNOWN
-        self.last_wp = -1
-        self.state_count = 0
 
 
         self.img_callback_rate = rospy.Rate(IMG_CALLBACK_RATE) # 50Hz
@@ -95,18 +98,18 @@ class TLDetector(object):
         used.
         '''
 
+        # if state != TrafficLight.UNKNOWN:
         if self.state != state:
             self.state_count = 0
             self.state = state
         elif self.state_count >= STATE_COUNT_THRESHOLD:
             self.last_state = self.state
-            light_wp = light_wp if state == TrafficLight.RED else -1
+            light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1 # yellow is also included to prevent sudden stop
             self.last_wp = light_wp
             self.upcoming_red_light_pub.publish(Int32(light_wp))
         else:
             self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         self.state_count += 1
-        # self.img_callback_rate.sleep()
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
@@ -151,7 +154,7 @@ class TLDetector(object):
 
             # Get classification
             predict = self.light_classifier.get_classification(cv_image)
-            rospy.logwarn("tl_detector: traffic light state: {}".format(predict))
+            # rospy.logwarn("tl_detector: traffic light state: {}".format(predict))
             return predict
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -167,7 +170,7 @@ class TLDetector(object):
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
-        if(self.pose):
+        if(self.pose and self.waypoint_tree):
             car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x, self.pose.pose.position.y)
 
             #TODO find the closest visible traffic light (if one exists)
@@ -184,8 +187,8 @@ class TLDetector(object):
                     closest_light = light
                     line_wp_idx = temp_wp_idx
 
-            # rospy.logwarn("tl_detector: diff {}".format(diff))
-        if closest_light:
+            rospy.logwarn("tl_detector: diff {}".format(diff))
+        if closest_light and diff < WPS_TO_CLASSIFY:
             state = self.get_light_state(closest_light)
             rospy.logwarn("tl_detector: closest light state {}".format(state))
             return line_wp_idx, state
