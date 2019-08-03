@@ -2,7 +2,8 @@
 
 The vehicle is successfully able to perform all require tasks (update waypoints, send control commands, detect traffic lights, and stop accordingly). Example video:
 
-<iframe width="853" height="480" src="https://www.youtube.com/embed/vIqzfK5vAFg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![Video](video.png)](https://youtu.be/vIqzfK5vAFg)
+
 
 ## Notes on Perception: Data Annotation and Deep Learning
 
