@@ -25,7 +25,7 @@ as well as to verify your TL classifier.
 '''
 
 LOOKAHEAD_WPS = 100 #200 # Number of waypoints we will publish. You can change this number
-PUBLISH_RATE = 5
+PUBLISH_RATE = 10
 MAX_DECEL = 1
 
 class WaypointUpdater(object):
@@ -129,7 +129,7 @@ class WaypointUpdater(object):
 
         return lane
     def decelerate_waypoints(self, waypoints, closest_idx):
-        rospy.logwarn("decelerating...")
+        # rospy.logwarn("decelerating...")
 
         temp = []
         stop_idx = max(self.stopline_wp_idx - closest_idx - 3, 0)
@@ -145,7 +145,7 @@ class WaypointUpdater(object):
             temp.append(p)
 
         d = self.distance(waypoints, 0, stop_idx)
-        rospy.logwarn('target vel={}, distance to the stopline={}'.format(temp[0].twist.twist.linear.x, d))
+        # rospy.logwarn('target vel={}, distance to the stopline={}'.format(temp[0].twist.twist.linear.x, d))
         return temp
 
     def traffic_cb(self, msg):

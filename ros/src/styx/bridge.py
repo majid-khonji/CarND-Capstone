@@ -38,7 +38,7 @@ TYPE = {
     'image':Image
 }
 
-KEEP_EVERY_N = 10
+KEEP_EVERY_N = 7
 # optimization tricks: keep every n image, also resize image before publishing
 class Bridge(object):
     def __init__(self, conf, server):
