@@ -19,7 +19,7 @@ DATA_COLLECTION = False
 STATE_COUNT_THRESHOLD = 3
 IMG_CALLBACK_RATE = 1
 
-WPS_TO_CLASSIFY = 200
+WPS_TO_CLASSIFY = 150
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')

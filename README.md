@@ -1,6 +1,8 @@
 # Individual Submission
 
+The vehicle is successfully able to perform all require tasks (update waypoints, send control commands, detect traffic lights, and stop accordingly). Example video:
 
+<iframe width="853" height="480" src="https://www.youtube.com/embed/vIqzfK5vAFg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Notes on Perception: Data Annotation and Deep Learning
 
@@ -16,15 +18,15 @@ Eventually decided to use the other dataset.
 
 ### Training
 
-* ssd_mobilenet
+* ssd_mobilenet_v1
 * Use Tensor Flow [object_detection tool](https://github.com/tensorflow/models/tree/master/research/object_detection)
-  * Deal with installation headache, environment vars, missing packages....
+  * Deal with installation headache, environment vars, TF version issues, missing packages....
 * Go to <path>/ models/research
 * mkdir checkpoints
 * copy sim_data.record to <path>/models/research
 
 ```bash
-export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+export PYTHONPATH=`pwd`:`pwd`/slim
 ```
 
 
