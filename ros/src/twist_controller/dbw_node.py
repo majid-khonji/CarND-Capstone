@@ -32,7 +32,7 @@ that we have created in the `__init__` function.
 '''
 
 # TODO: MAKE IT 50 for real car (running on slow PC)
-PUBLISH_RATE = 15 # make sure you increase it on a real car
+PUBLISH_RATE = 50 # make sure you increase it on a real car
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')
