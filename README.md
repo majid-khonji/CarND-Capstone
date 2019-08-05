@@ -1,6 +1,24 @@
 # Individual Submission
 
-The vehicle is successfully able to perform all require tasks (update waypoints, send control commands, detect traffic lights, and stop accordingly). Example video:
+The vehicle is successfully able to perform all require tasks (update waypoints, send control commands, detect traffic lights, and stop accordingly).
+
+The current setting is adjusted to work on a high-end machine. 
+
+Example Video 1 on a high end machine (w/ dual GPU GTX 1080 ti):
+
+[![Video](video-high-end.png)](https://www.youtube.com/watch?v=0abNQzqBtQQ)
+
+On lower end machines (e.g., a laptop without GPU), I'd suggest tuning the following:
+
+- In waypoint_updater.py
+  - LOOKAHEAD_WPS = 100
+  - PUBLISH_RATE = 10
+- In tl_detector.py
+  - WPS_TO_CLASSIFY = 100 # start classify image only if the distance to the next traffic light is <= 100
+- In dbw_node.py
+  - PUBLISH_RATE = 10 # it might not be safe, but solves the lag issue on the simulator
+
+Example video 2 on a lower end machine:
 
 [![Video](video.png)](https://youtu.be/vIqzfK5vAFg)
 

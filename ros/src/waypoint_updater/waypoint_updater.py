@@ -24,8 +24,8 @@ as well as to verify your TL classifier.
 
 '''
 
-LOOKAHEAD_WPS = 100 #200 # Number of waypoints we will publish. You can change this number
-PUBLISH_RATE = 10
+LOOKAHEAD_WPS = 200 #200 # Number of waypoints we will publish. You can change this number
+PUBLISH_RATE = 30
 MAX_DECEL = 1
 
 class WaypointUpdater(object):
